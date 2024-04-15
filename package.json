@@ -1,5 +1,5 @@
 {
-  "name": "ddjs-immediate-mode-ui",
+  "name": "ddjs-immediate-mode-rendering",
   "type": "module",
   "private": true,
   "scripts": {
@@ -9,8 +9,10 @@
   },
   "dependencies": {
     "@slidev/cli": "^0.48.8",
+    "@slidev/theme-apple-basic": "^0.25.1",
     "@slidev/theme-default": "latest",
     "@slidev/theme-seriph": "latest",
     "vue": "^3.4.21"
-  }
+  },
+  "devDependencies": {}
 }

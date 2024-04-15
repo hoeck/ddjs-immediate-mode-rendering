@@ -1,601 +1,672 @@
 ---
-# try also 'default' to start simple
-theme: seriph
-# random image from a curated Unsplash collection by Anthony
-# like them? see https://unsplash.com/collections/94734566/slidev
-background: https://cover.sli.dev
-# some information about your slides, markdown enabled
-title: Welcome to Slidev
-info: |
-  ## Slidev Starter Template
-  Presentation slides for developers.
-
-  Learn more at [Sli.dev](https://sli.dev)
-# apply any unocss classes to the current slide
+theme: apple-basic
+colorSchema: light
 class: text-center
-# https://sli.dev/custom/highlighters.html
 highlighter: shiki
-# https://sli.dev/guide/drawing
+lineNumbers: false
+info: |
+  ## Immediate Mode Rendering
 drawings:
   persist: false
-# slide transition: https://sli.dev/guide/animations#slide-transitions
+defaults:
+  foo: true
 transition: slide-left
-# enable MDC Syntax: https://sli.dev/guide/syntax#mdc-syntax
+title: Immediate Mode Rendering
 mdc: true
+monaco: true
+monacoTypesSource: local # or cdn or none
+export:
+  format: pdf
+  timeout: 30000
+  dark: false
+  withClicks: false
+  withToc: false
+canvasWidth: 650
+fonts:
+  sans: Noto Color Emoji
+  serif: Robot Slab
+  mono: Fira Code
 ---
 
-# Welcome to Slidev
+# Immediate Mode Rendering Pattern
 
-Presentation slides for developers
+Who: Erik
 
-<div class="pt-12">
-  <span @click="$slidev.nav.next" class="px-2 py-1 rounded cursor-pointer" hover="bg-white bg-opacity-10">
-    Press Space for next page <carbon:arrow-right class="inline"/>
-  </span>
-</div>
+Product: HeavyGoods.net
 
-<div class="abs-br m-6 flex gap-2">
-  <button @click="$slidev.nav.openInEditor()" title="Open in Editor" class="text-xl slidev-icon-btn opacity-50 !border-none !hover:text-white">
-    <carbon:edit />
-  </button>
-  <a href="https://github.com/slidevjs/slidev" target="_blank" alt="GitHub" title="Open in GitHub"
-    class="text-xl slidev-icon-btn opacity-50 !border-none !hover:text-white">
-    <carbon-logo-github />
-  </a>
-</div>
+Lang: Typescript
 
 <!--
-The last comment block of each slide will be treated as slide notes. It will be visible and editable in Presenter Mode along with the slide. [Read more in the docs](https://sli.dev/guide/syntax.html#notes)
--->
+SCRIPT IDEA
 
----
-transition: fade-out
----
+- rendering, how it happens (in more complex systems)
+  -> declare the ui somehow
+  -> render tree gets build from that declaration (that is typically not accessible to the user)
+  -> some advanced graphics pipeline transforms the render tree into pixels
+  => super complex, lots of indirection, tons of code, efficient (only changed pixels are rerendered, pixels are scrolled with hardware acceleration, ...)
 
-# What is Slidev?
+- what if everything could be simpler
+  - declare UI
+  - ~~render tree~~
+  - ~~graphics pipeline~~
+  => directly put pixels on a screen
 
-Slidev is a slides maker and presenter designed for developers, consist of the following features
+- try it:
+  - button and label on canvas
+  ```
+      document.body.innerHTML = '<canvas />'
 
-- 📝 **Text-based** - focus on the content with Markdown, and then style them later
-- 🎨 **Themable** - theme can be shared and used with npm packages
-- 🧑‍💻 **Developer Friendly** - code highlighting, live coding with autocompletion
-- 🤹 **Interactive** - embedding Vue components to enhance your expressions
-- 🎥 **Recording** - built-in recording and camera view
-- 📤 **Portable** - export into PDF, PNGs, or even a hostable SPA
-- 🛠 **Hackable** - anything possible on a webpage
+      const canvas = document.getElementsByTagName('canvas')[0]
+      const ctx = canvas.getContext('2d')
 
-<br>
-<br>
+      ctx.strokeRect(1,1, 100, 20)
+      ctx.fillText('OK', 30, 15)
 
-Read more about [Why Slidev?](https://sli.dev/guide/why)
-
-<!--
-You can have `style` tag in markdown to override the style for the current page.
-Learn more: https://sli.dev/guide/syntax#embedded-styles
--->
-
-<style>
-h1 {
-  background-color: #2B90B6;
-  background-image: linear-gradient(45deg, #4EC5D4 10%, #146b8c 20%);
-  background-size: 100%;
-  -webkit-background-clip: text;
-  -moz-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  -moz-text-fill-color: transparent;
-}
-</style>
-
-<!--
-Here is another comment.
--->
-
----
-transition: slide-up
-level: 2
----
-
-# Navigation
-
-Hover on the bottom-left corner to see the navigation's controls panel, [learn more](https://sli.dev/guide/navigation.html)
-
-## Keyboard Shortcuts
-
-|     |     |
-| --- | --- |
-| <kbd>right</kbd> / <kbd>space</kbd>| next animation or slide |
-| <kbd>left</kbd>  / <kbd>shift</kbd><kbd>space</kbd> | previous animation or slide |
-| <kbd>up</kbd> | previous slide |
-| <kbd>down</kbd> | next slide |
-
-<!-- https://sli.dev/guide/animations.html#click-animations -->
-<img
-  v-click
-  class="absolute -bottom-9 -left-7 w-80 opacity-50"
-  src="https://sli.dev/assets/arrow-bottom-left.svg"
-  alt=""
-/>
-<p v-after class="absolute bottom-23 left-45 opacity-30 transform -rotate-10">Here!</p>
-
----
-layout: two-cols
-layoutClass: gap-16
----
-
-# Table of contents
-
-You can use the `Toc` component to generate a table of contents for your slides:
-
-```html
-<Toc minDepth="1" maxDepth="1"></Toc>
-```
-
-The title will be inferred from your slide content, or you can override it with `title` and `level` in your frontmatter.
-
-::right::
-
-<Toc v-click minDepth="1" maxDepth="2"></Toc>
-
----
-layout: image-right
-image: https://cover.sli.dev
----
-
-# Code
-
-Use code snippets and get the highlighting directly, and even types hover![^1]
-
-```ts {all|5|7|7-8|10|all} twoslash
-// TwoSlash enables TypeScript hover information
-// and errors in markdown code blocks
-// More at https://shiki.style/packages/twoslash
-
-import { computed, ref } from 'vue'
-
-const count = ref(0)
-const doubled = computed(() => count.value * 2)
-
-doubled.value = 2
-```
-
-<arrow v-click="[4, 5]" x1="350" y1="310" x2="195" y2="334" color="#953" width="2" arrowSize="1" />
-
-<!-- This allow you to embed external code blocks -->
-<<< @/snippets/external.ts#snippet
-
-<!-- Footer -->
-[^1]: [Learn More](https://sli.dev/guide/syntax.html#line-highlighting)
-
-<!-- Inline style -->
-<style>
-.footnotes-sep {
-  @apply mt-5 opacity-10;
-}
-.footnotes {
-  @apply text-sm opacity-75;
-}
-.footnote-backref {
-  display: none;
-}
-</style>
-
-<!--
-Notes can also sync with clicks
-
-[click] This will be highlighted after the first click
-
-[click] Highlighted with `count = ref(0)`
-
-[click:3] Last click (skip two clicks)
--->
-
----
-level: 2
----
-
-# Shiki Magic Move
-
-Powered by [shiki-magic-move](https://shiki-magic-move.netlify.app/), Slidev supports animations across multiple code snippets.
-
-Add multiple code blocks and wrap them with <code>````md magic-move</code> (four backticks) to enable the magic move. For example:
-
-````md magic-move
-```ts {*|2|*}
-// step 1
-const author = reactive({
-  name: 'John Doe',
-  books: [
-    'Vue 2 - Advanced Guide',
-    'Vue 3 - Basic Guide',
-    'Vue 4 - The Mystery'
-  ]
-})
-```
-
-```ts {*|1-2|3-4|3-4,8}
-// step 2
-export default {
-  data() {
-    return {
-      author: {
-        name: 'John Doe',
-        books: [
-          'Vue 2 - Advanced Guide',
-          'Vue 3 - Basic Guide',
-          'Vue 4 - The Mystery'
-        ]
+      ctx.onclick = ({offsetX, offsetY}) => {
+        if (offsetX > 1 && offsetX < 100 && offsetY > 1 && offsetY < 20) {
+          console.log('click')
+        }
       }
-    }
+  ```
+
+  - simple at the beginning but explodes with each item added
+  - changing, maintaining such a hardwired thing -> not possible
+  - is there a way to make this better without adding tons of indirection?
+
+-> functional programming 💕
+-> use the stack as our render tree to bring order into the chaos
+
+  ```
+  function Button(canvas, ctx, {x, y, width, height, label}) {
+     ctx.strokeRect(x, y, x + width, y + height)
+     ctx.fillText(label, x + width / 2, y + height / 2 + 10)
   }
-}
-```
+  ```
 
-```ts
-// step 3
-export default {
-  data: () => ({
-    author: {
-      name: 'John Doe',
-      books: [
-        'Vue 2 - Advanced Guide',
-        'Vue 3 - Basic Guide',
-        'Vue 4 - The Mystery'
-      ]
-    }
-  })
-}
-```
+-  stack layout
 
-Non-code blocks are ignored.
+- use transformation matrix
+- everything looks pretty "declarative" / DSLly
+- replace the context with a proxy for additional benefits
 
-```vue
-<!-- step 4 -->
-<script setup>
-const author = {
-  name: 'John Doe',
-  books: [
-    'Vue 2 - Advanced Guide',
-    'Vue 3 - Basic Guide',
-    'Vue 4 - The Mystery'
-  ]
-}
-</script>
-```
-````
-
----
-
-# Components
-
-<div grid="~ cols-2 gap-4">
-<div>
-
-You can use Vue components directly inside your slides.
-
-We have provided a few built-in components like `<Tweet/>` and `<Youtube/>` that you can use directly. And adding your custom components is also super easy.
-
-```html
-<Counter :count="10" />
-```
-
-<!-- ./components/Counter.vue -->
-<Counter :count="10" m="t-4" />
-
-Check out [the guides](https://sli.dev/builtin/components.html) for more.
-
-</div>
-<div>
-
-```html
-<Tweet id="1390115482657726468" />
-```
-
-<Tweet id="1390115482657726468" scale="0.65" />
-
-</div>
-</div>
-
-<!--
-Presenter note with **bold**, *italic*, and ~~striked~~ text.
-
-Also, HTML elements are valid:
-<div class="flex w-full">
-  <span style="flex-grow: 1;">Left content</span>
-  <span>Right content</span>
-</div>
 -->
 
 ---
-class: px-20
----
 
-# Themes
+# Rendering (with a pipeline) 1
 
-Slidev comes with powerful theming support. Themes can provide styles, layouts, components, or even configurations for tools. Switching between themes by just **one edit** in your frontmatter:
-
-<div grid="~ cols-2 gap-2" m="t-2">
-
-```yaml
----
-theme: default
----
+```mermaid
+flowchart LR
+    A[Declaration] --> B[Render Tree] -- Graphics Pipeline --> C[Pixels]
 ```
 
-```yaml
+<!--
+
+- rendering, how it happens (in more complex systems)
+  1. DECLARE the ui somehow
+  2. render tree gets build from that declaration (HIDDEN from user)
+  3. some advanced GRAPHICS PIPELINE transforms the render tree into
+  4. PIXELS on screen (actually calls to your OS graphics abstraction)
+     - nobody sets pixels, its always regions (aka buffers) of pixels
+=> super complex, lots of indirection, tons of code, efficient (only changed pixels are rerendered, pixels are scrolled with hardware acceleration, ...)
+
+AUDIENCE
+
+- put HTML, CSS, JS in this diagram
+
+-->
+
 ---
-theme: seriph
----
+
+# Rendering (with a pipeline) 2
+
+```mermaid
+flowchart LR
+    X[JS] --> A[HTML, CSS] --> B[Render Tree] -- Graphics Pipeline --> C[Pixels]
 ```
 
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-default/01.png?raw=true" alt="">
+<!--
 
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-seriph/01.png?raw=true" alt="">
+- and more complexities
+- render tree is also called the scenegraph (in game engines)
 
-</div>
-
-Read more about [How to use a theme](https://sli.dev/themes/use.html) and
-check out the [Awesome Themes Gallery](https://sli.dev/themes/gallery.html).
+-->
 
 ---
 
-# Clicks Animations
+# Rendering (with a pipeline) 3
 
-You can add `v-click` to elements to add a click animation.
-
-<div v-click>
-
-This shows up when you click the slide:
-
-```html
-<div v-click>This shows up when you click the slide.</div>
+```mermaid
+flowchart LR
+    Y[Framework] --> X[JS] --> A[HTML, CSS] --> B[Render Tree] -- Graphics Pipeline --> C[Pixels]
 ```
 
-</div>
+<!--
 
-<br>
+- add your js of the day on top
+
+-->
+
+---
+
+<img src="/resources/chrome-render-pipeline.jpeg" class="h-95 mx-auto rounded shadow" />
+
+<!--
+
+- chrome graphics pipeline from https://developer.chrome.com/docs/chromium/renderingng-architecture
+
+-->
+
+---
+
+# Oh No
+
+- everything is sooo complex 🤯
+- what if we're tasked creating the pixels ourselves?
 
 <v-click>
 
-The <span v-mark.red="3"><code>v-mark</code> directive</span>
-also allows you to add
-<span v-mark.circle.orange="4">inline marks</span>
-, powered by [Rough Notation](https://roughnotation.com/):
+Imagine we're the new Luddites: <img src="/resources/Rebuild_Faction_New_Luddies.webp" class="h-30 mx-auto rounded shadow" />
 
-```html
-<span v-mark.underline.orange>inline markers</span>
+</v-click>
+
+<v-click>
+to the rescue: "Immediate mode"
+
+```mermaid
+flowchart LR
+    Y[Framework]:::drop --> X[JS]:::keep --> A[HTML, CSS]:::drop --> B[Render Tree]:::drop --> C[Pixels]:::keep
+
+    classDef drop fill:#faa,stroke:#fcc,stroke-width:2px,color:#fdd;
+    classDef keep fill:#2b2,stroke:#181,stroke-width:2px,color:#fff;
+
 ```
 
 </v-click>
 
-<div mt-20 v-click>
+<!--
 
-[Learn More](https://sli.dev/guide/animations#click-animations)
+- slang for "direct access" to pixels
+  - not sure where I picked up the term, it was years ago
+- weg mit den mechanischen webstühlen!!!
 
-</div>
+-->
 
 ---
-preload: false
----
 
-# Motions
+# Immediate Mode Code
 
-Motion animations are powered by [@vueuse/motion](https://motion.vueuse.org/), triggered by `v-motion` directive.
+```js
+document.body.innerHTML = '<canvas style="background-color: white" />';
 
-```html
-<div
-  v-motion
-  :initial="{ x: -80 }"
-  :enter="{ x: 0 }">
-  Slidev
-</div>
+const canvas = document.getElementsByTagName("canvas")[0];
+const ctx = canvas.getContext("2d");
 ```
 
-<div class="w-60 relative mt-6">
-  <div class="relative w-40 h-40">
-    <img
-      v-motion
-      :initial="{ x: 800, y: -100, scale: 1.5, rotate: -50 }"
-      :enter="final"
-      class="absolute top-0 left-0 right-0 bottom-0"
-      src="https://sli.dev/logo-square.png"
-      alt=""
-    />
-    <img
-      v-motion
-      :initial="{ y: 500, x: -100, scale: 2 }"
-      :enter="final"
-      class="absolute top-0 left-0 right-0 bottom-0"
-      src="https://sli.dev/logo-circle.png"
-      alt=""
-    />
-    <img
-      v-motion
-      :initial="{ x: 600, y: 400, scale: 2, rotate: 100 }"
-      :enter="final"
-      class="absolute top-0 left-0 right-0 bottom-0"
-      src="https://sli.dev/logo-triangle.png"
-      alt=""
-    />
-  </div>
+<v-click>
+```js
+ctx.strokeRect(1, 1, 100, 20);
+ctx.fillText("OK", 30, 15);
+```
+</v-click>
 
-  <div
-    class="text-5xl absolute top-14 left-40 text-[#2B90B6] -z-1"
-    v-motion
-    :initial="{ x: -80, opacity: 0}"
-    :enter="{ x: 0, opacity: 1, transition: { delay: 2000, duration: 1000 } }">
-    Slidev
-  </div>
+<v-click>
+```js
+canvas.onclick = ({ offsetX, offsetY }) => {
+  if (offsetX > 1 && offsetX < 100 && offsetY > 1 && offsetY < 20) {
+    console.log("click");
+  }
+};
+```
+</v-click>
+
+<!--
+
+- a simple button which can be clicked
+- straight up move pixels with our bare hands
+- click only logs to the console
+- ui is completely static
+
+DEMO ON NEXT SLIDE
+
+-->
+
+---
+
+# Immediate Mode Code
+
+<Example1 />
+
+---
+
+# State change
+
+```js
+const state = { ok: true };
+```
+
+```js
+setInterval(
+  () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeRect(1, 1, 100, 20);
+    ctx.fillText(state.ok ? "OK" : "NOT OK", 30, 15);
+  },
+  (1 / 60) * 1000, // 60Hz
+);
+```
+
+```js
+canvas.onclick = ({ offsetX, offsetY }) => {
+  if (offsetX > 1 && offsetX < 100 && offsetY > 1 && offsetY < 20) {
+    state.ok = !state.ok;
+  }
+};
+```
+
+<!--
+
+IMPROVED:
+- simple global state
+  - not the only solution to state but the most simple one
+- a render loop
+
+DEMO ON NEXT SLIDE
+
+-->
+
+---
+
+# State change
+
+<Example2 />
+
+---
+
+# Nesting
+
+```js
+const state = { ok: [true, true, false] };
+```
+
+```js
+setInterval(
+  () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (const i of [0, 1, 2]) {
+      ctx.strokeRect(1, 1 + 25 * i, 100, 20);
+      ctx.fillText(state.ok[i] ? "OK" : "NOT OK", 30, 15 + 25 * i);
+    }
+  },
+  (1 / 60) * 1000, // 60Hz
+);
+```
+
+<v-click>
+```js
+canvas.onclick = ({ offsetX, offsetY }) => { ... }
+```
+<div class="absolute top-80 left-80">
+<span class="text-5xl">🤮</span>
 </div>
+</v-click>
 
-<!-- vue script setup scripts can be directly used in markdown, and will only affects current page -->
-<script setup lang="ts">
-const final = {
-  x: 0,
-  y: 0,
-  rotate: 0,
-  scale: 1,
-  transition: {
-    type: 'spring',
-    damping: 10,
-    stiffness: 20,
-    mass: 2
+<!--
+
+- keeping manually track of elements -> not good, not possible (for me)
+  - and this is only a really simple 1 level nesting case over a basic loop,
+    not even a more complex layout algo
+
+-->
+
+---
+
+# Functional 💕 Programming
+
+```js
+function button(env, { x, y, width, height, label, onclick }) {
+  env.ctx.strokeRect(x, y, width, height);
+  env.ctx.fillText(label, x + 30, y + 15);
+
+  env.onclick.push(({ offsetX, offsetY }) => {
+    if (
+      offsetX > x &&
+      offsetX < x + width &&
+      offsetY > y &&
+      offsetY < y + height
+    ) {
+      onclick();
+    }
+  });
+}
+```
+
+<!--
+
+- good ol divide and conquer:
+- combine simple elements into more complex ones
+- let the container (`stackLayout`) pass an offset into an element
+- element knows where it is so it can capture clicks
+
+-->
+
+---
+
+# FP 💕 - `Container`
+
+```js
+function stackLayout(env, { children, height }) {
+  let y = 1;
+
+  for (let i = 0; i < children.length; i++) {
+    const c = children[i];
+
+    c(env, { y });
+
+    y += height;
   }
 }
-</script>
+```
 
-<div
-  v-motion
-  :initial="{ x:35, y: 40, opacity: 0}"
-  :enter="{ y: 0, opacity: 1, transition: { delay: 3500 } }">
+<!--
 
-[Learn More](https://sli.dev/guide/animations.html#motion)
+- do this for every "Component"
 
+-->
+
+---
+
+# FP 💕 - `Composition`
+
+```js
+function root(env) {
+  stackLayout(env, {
+    height: 30,
+    children: [0, 1, 2].map(
+      (i) =>
+        (env, { y }) =>
+          button(env, {
+            x: 1,
+            y,
+            width: 100,
+            height: 20,
+            label: state.ok[i] ? `OK ${i}` : `NOT OK ${i}`,
+            onclick: () => {
+              state.ok[i] = !state.ok[i];
+            },
+          }),
+    ),
+  });
+}
+```
+
+<!--
+
+- use the "Components" to build sth. complex
+- needs lots of wiring
+
+-->
+
+---
+
+# FP 💕 - `render1`
+
+```js
+function render1(canvas, root) {
+  const onclick = [];
+  const ctx = canvas.getContext("2d");
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  root({ ctx, onclick });
+
+  canvas.onclick = (ev) => onclick.forEach((c) => c(ev));
+}
+```
+
+<!--
+
+- one step of the render loop
+- collecting all clicks on the canvas and resetting them after each frame
+
+-->
+
+---
+
+# FP 💕 - `Loop`
+
+```
+let state = {ok: [true, true, false]}
+
+setInterval(
+    () => {
+      render1(canvas, root);
+    },
+    (1 / 60) * 1000, // 60Hz
+  );
+```
+
+<!--
+
+- aaand the render loop
+
+-->
+
+---
+
+# FP 💕
+
+<Example3 />
+
+<!--
+
+- it works
+- looks a lot like react lol
+
+-->
+
+---
+
+# Why?
+
+<div class="text-green text-2xl flex">
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 32 32">
+	<path fill="currentColor" d="M16 3C8.832 3 3 8.832 3 16s5.832 13 13 13s13-5.832 13-13S23.168 3 16 3m0 2c6.087 0 11 4.913 11 11s-4.913 11-11 11S5 22.087 5 16S9.913 5 16 5m-1 5v5h-5v2h5v5h2v-5h5v-2h-5v-5z" />
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 32 32">
+	<path fill="currentColor" d="M16 3C8.832 3 3 8.832 3 16s5.832 13 13 13s13-5.832 13-13S23.168 3 16 3m0 2c6.087 0 11 4.913 11 11s-4.913 11-11 11S5 22.087 5 16S9.913 5 16 5m-1 5v5h-5v2h5v5h2v-5h5v-2h-5v-5z" />
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 32 32">
+	<path fill="currentColor" d="M16 3C8.832 3 3 8.832 3 16s5.832 13 13 13s13-5.832 13-13S23.168 3 16 3m0 2c6.087 0 11 4.913 11 11s-4.913 11-11 11S5 22.087 5 16S9.913 5 16 5m-1 5v5h-5v2h5v5h2v-5h5v-2h-5v-5z" />
+</svg>
 </div>
 
----
+- no invisible steps
+- render trees live inside the stack
+- simple implementation (few lines of code)
+- simple to use and debug (looks like react)
+- extreme control over the output (pixel perfect)
+- works on any system
 
-# LaTeX
-
-LaTeX is supported out-of-box powered by [KaTeX](https://katex.org/).
-
-<br>
-
-Inline $\sqrt{3x-1}+(1+x)^2$
-
-Block
-$$ {1|3|all}
-\begin{array}{c}
-
-\nabla \times \vec{\mathbf{B}} -\, \frac1c\, \frac{\partial\vec{\mathbf{E}}}{\partial t} &
-= \frac{4\pi}{c}\vec{\mathbf{j}}    \nabla \cdot \vec{\mathbf{E}} & = 4 \pi \rho \\
-
-\nabla \times \vec{\mathbf{E}}\, +\, \frac1c\, \frac{\partial\vec{\mathbf{B}}}{\partial t} & = \vec{\mathbf{0}} \\
-
-\nabla \cdot \vec{\mathbf{B}} & = 0
-
-\end{array}
-$$
-
-<br>
-
-[Learn more](https://sli.dev/guide/syntax#latex)
-
----
-
-# Diagrams
-
-You can create diagrams / graphs from textual descriptions, directly in your Markdown.
-
-<div class="grid grid-cols-4 gap-5 pt-4 -mb-6">
-
-```mermaid {scale: 0.5, alt: 'A simple sequence diagram'}
-sequenceDiagram
-    Alice->John: Hello John, how are you?
-    Note over Alice,John: A typical interaction
-```
-
-```mermaid {theme: 'neutral', scale: 0.8}
-graph TD
-B[Text] --> C{Decision}
-C -->|One| D[Result 1]
-C -->|Two| E[Result 2]
-```
-
-```mermaid
-mindmap
-  root((mindmap))
-    Origins
-      Long history
-      ::icon(fa fa-book)
-      Popularisation
-        British popular psychology author Tony Buzan
-    Research
-      On effectiveness<br/>and features
-      On Automatic creation
-        Uses
-            Creative techniques
-            Strategic planning
-            Argument mapping
-    Tools
-      Pen and paper
-      Mermaid
-```
-
-```plantuml {scale: 0.7}
-@startuml
-
-package "Some Group" {
-  HTTP - [First Component]
-  [Another Component]
-}
-
-node "Other Groups" {
-  FTP - [Second Component]
-  [First Component] --> FTP
-}
-
-cloud {
-  [Example 1]
-}
-
-database "MySql" {
-  folder "This is my folder" {
-    [Folder 3]
-  }
-  frame "Foo" {
-    [Frame 4]
-  }
-}
-
-[Another Component] --> [Example 1]
-[Example 1] --> [Folder 3]
-[Folder 3] --> [Frame 4]
-
-@enduml
-```
-
+<div class="text-red text-2xl flex">
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 32 32">
+	<path fill="currentColor" d="M16 3C8.832 3 3 8.832 3 16s5.832 13 13 13s13-5.832 13-13S23.168 3 16 3m0 2c6.087 0 11 4.913 11 11s-4.913 11-11 11S5 22.087 5 16S9.913 5 16 5m-6 10v2h12v-2z" />
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 32 32">
+	<path fill="currentColor" d="M16 3C8.832 3 3 8.832 3 16s5.832 13 13 13s13-5.832 13-13S23.168 3 16 3m0 2c6.087 0 11 4.913 11 11s-4.913 11-11 11S5 22.087 5 16S9.913 5 16 5m-6 10v2h12v-2z" />
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 32 32">
+	<path fill="currentColor" d="M16 3C8.832 3 3 8.832 3 16s5.832 13 13 13s13-5.832 13-13S23.168 3 16 3m0 2c6.087 0 11 4.913 11 11s-4.913 11-11 11S5 22.087 5 16S9.913 5 16 5m-6 10v2h12v-2z" />
+</svg>
 </div>
 
-[Learn More](https://sli.dev/guide/syntax.html#diagrams)
+- computationally expensive (aka inefficient): renders everything all the time
+- not standardized
+- hard with layouts that require to know the size of some parts
+
+<!--
+
+# pros
+
+- no invisible steps
+  -> easy to read, easy to extend, easy to maintain
+- render trees live inside the stack
+  -> no need to build and maintain a complicated datastructure
+- simple
+  -> few lines of code for what it does
+  -> easy to write and guard
+- extreme control over the output
+  -> output can be anything though, e.g. html, svg, pngs, terminal graphics, ...
+
+# cons
+
+- inefficient
+  -> may not work for larger or complex scences
+  -> real engines only render changed portions and cache entire
+- we have no render tree
+  -> asking for the size of a component -> render the whole tree (or at least the component) -> O(n^2) complexity :(
+- not standardized
+  -> need to make many decisions
+     - transformation matrix or simple explicit box model
+     - typings?
+     - need to implement your own layout algos
+
+-->
 
 ---
-src: ./pages/multiple-entries.md
-hide: false
----
+
+# Conclusion
+
+- it can be done
+- don't be afraid
+- easily doable with basic FP- or OOP-skills (no endofunctors nor decorators required)
 
 ---
 
-# Monaco Editor
+# Anyone want to see it real life?
 
-Slidev provides built-in Moanco Editor support.
+<v-click>
 
-Add `{monaco}` to the code block to turn it into an editor:
+We use it in [heavygoods.net](www.heavygoods.net) to build simple vector-like vehicle depictions:
 
-```ts {monaco}
-import { ref } from 'vue'
-import hello from './external'
+<img src="/resources/tractor-trailer-side.png" class="h-30 my-4 mx-auto rounded shadow" />
 
-const code = ref('const a = 1')
-hello()
-```
+<img src="/resources/tractor-trailer-top.png" class="h-30 mx-auto rounded shadow" />
+</v-click>
 
-Use `{monaco-run}` to create an editor that can execute the code directly in the slide:
+<!--
 
-```ts {monaco-run}
-function fibonacci(n: number): number {
-  return n <= 1
-    ? n
-    : fibonacci(n - 1) + fibonacci(n - 2) // you know, this is NOT the best way to do it :P
+- please say 'yes' otherwise we can end this here
+- this is actually an svg
+
+-->
+
+---
+
+# RL - debugging
+
+With key points highlighted for debugging:
+
+<img src="/resources/tractor-trailer-top-debug.png" class="w-200 mx-auto rounded shadow" />
+
+---
+
+# RL - full scene
+
+<img src="/resources/tractor-trailer-in-action.png" class="h-80 mx-auto rounded shadow" />
+
+<!--
+
+- this one is a canvas layer on a leaflet map with a google maps base layer
+- same code is used to render the svg and the canvas representations
+
+-->
+
+---
+
+# RL - in a table
+
+<img src="/resources/vehicle-list.png" class="h-80 mx-auto rounded shadow" />
+
+<!--
+
+- renders hundrets of little icons in a table, no caching needed (yet)
+
+-->
+
+---
+
+# Implementation - Feats
+
+Some tricks were necessary to make it work:
+
+- DX: explicit `2D` transformation matrix to group nested components
+- DX: `ctx` is a facade to allow different render backends: svg, canvas, points, bounds
+- DX: backends allow easy layouting
+- DX: drawings have become models that contain truths (e.g. length of a vehicle is its drawing bounds 😲)
+- PERF: svg has a flat "virtual dom" for fast rerendering while dragging elements
+
+<!--
+
+- started with some code that just literally drew something on a canvas, some
+  thightly coupled functions
+- went on to add features to make drawings interactive and sources of truth
+
+-->
+
+---
+
+# Implementation - Actual Code
+
+```ts
+export function semiTrailerTop(
+  trailer: SemiTrailer | JointSemiTrailer,
+  vehicleState?: SimulationVehicleState,
+): Shape {
+  /* defines axles, virtualAxleShape, chassis */
+
+  return group({
+    children: [
+      ref({ key: "origin" }),
+      ref({ key: "chassisFrontJoint", pos: [0, 0] }),
+      axles,
+      virtualAxleShape,
+      chassis,
+    ],
+  });
 }
-
-console.log(Array.from({ length: 10 }, (_, i) => fibonacci(i + 1)))
 ```
 
----
-layout: center
-class: text-center
+<!--
+
+- group is a container
+- ref creates a named point when using the ref renderer
+- all elements in the semi trailer are relative to its origin
+
+-->
+
 ---
 
-# Learn More
+# Thats all
 
-[Documentations](https://sli.dev) · [GitHub](https://github.com/slidevjs/slidev) · [Showcases](https://sli.dev/showcases.html)
+Thanks!
+
+<v-click>
+
+Special Thanks: check out https://sli.dev - best tool so far to build slide decks with.
+
+- built in diagrams with https://mermaid.js.org/
+- built in code highlighting (& editing)
+- my running examples are just vue components
+- runs in github docs and exports to pdf
+
+</v-click>
+
+<!--
+
+Special thanks to slidev
+
+- used it already a couple of times
+- but this time many of its features really came in handy (mermaid!)
+
+-->
