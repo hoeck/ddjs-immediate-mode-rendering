@@ -1,6 +1,7 @@
-# Lightning Talk Intro To Runtypes
+# Presentation: Immediate Mode Rendering
 
 [Slides](https://hoeck.github.io/ddjs-immediate-mode-rendering)
+
 [Pdf Slides](slides-export.pdf)
 
 ## Dev
